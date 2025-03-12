@@ -1,6 +1,6 @@
 const getState = ({ getStore, setStore, getActions }) => {
 
-	const agenda = process.env.AGENDA || "";
+	const agenda = process.env.AGENDA || "Rocket1";
 
 
 	return {
@@ -14,7 +14,15 @@ const getState = ({ getStore, setStore, getActions }) => {
 			getData: str => {
 				fetch(`https://playground.4geeks.com/contact/agendas/${agenda}/contacts`)
 					.then(res => res.json())
-					.then(data => setStore({ contactList: data.contacts }))
+					.then(data => {
+						if (data.contacts && Array.isArray(data.contacts) && data.contacts.length > 0) {
+							setStore({ contactList: data.contacts });
+						} else {
+							setStore({ contactList: [] });
+							window.alert(`Error: ${data.detail}`);
+						}
+					}
+					)
 					.catch(error => console.log(error));
 			},
 			createContact: async user => {
